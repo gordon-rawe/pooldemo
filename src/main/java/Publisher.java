@@ -19,17 +19,22 @@ public class Publisher {
     }
 
     public void handleUploads(List<Photo> photos) {
-        pool = Executors.newFixedThreadPool(photos.size());
-        for(Photo photo:photos){
-            photo.upload(new Photo.Callback() {
+        pool = Executors.newFixedThreadPool(3);
+        for (Photo photo : photos) {
+            pool.submit(new Runnable() {
                 @Override
-                public void onSuccess() {
+                public void run() {
+                    photo.upload(new Photo.Callback() {
+                        @Override
+                        public void onSuccess(Photo photo) {
+                            System.out.println(photo.getName() + "  --->>>   +++");
+                        }
 
-                }
-
-                @Override
-                public void onFail() {
-
+                        @Override
+                        public void onFail(Photo photo) {
+                            System.out.println(photo.getName() + "  --->>>   ---");
+                        }
+                    });
                 }
             });
         }
